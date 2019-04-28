@@ -6,6 +6,7 @@
   "dependencies": {
     "@slack/interactive-messages": "^1.1.1",
     "@slack/web-api": "^5.0.1",
+    "express": "^4.16.4",
     "pubsub-js": "^1.7.0",
     "puppeteer": "^1.15.0",
     "uuid": "^3.3.2"
