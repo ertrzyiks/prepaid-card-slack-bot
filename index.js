@@ -17,8 +17,11 @@ const remoteInput = new RemoteInputService();
   http.createServer(app).listen(config.server.port, () => {
     console.log(`server listening on port ${config.server.port}`)
 
-    cron.schedule('30 16 * * *', () => {
-      go({remoteInput})
+    cron.schedule('30 16 * * *', async () => {
+      for (let i = 0; i < 3; i++) {
+        const res = await go({remoteInput})
+        if (res) break
+      }
     }, {
       scheduled: true,
       timezone: 'Europe/Warsaw'
@@ -26,7 +29,6 @@ const remoteInput = new RemoteInputService();
 
     // Clean up public folder
     cron.schedule('0 0 * * *', () => {
-      console.log('Clean Up')
       const fs = require('fs')
       const path = require('path')
       const directory = 'public'
