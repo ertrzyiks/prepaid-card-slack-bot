@@ -52,10 +52,6 @@ class RemoteInputService {
       })
     })
   }
-
-  async startServer({port}) {
-    return await this.slackInteractions.start(port);
-  }
 }
 
 module.exports = {
