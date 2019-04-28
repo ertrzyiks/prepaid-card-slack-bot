@@ -14,8 +14,13 @@ const remoteInput = new RemoteInputService();
   app.use('/slack/actions', remoteInput.slackInteractions.expressMiddleware())
   app.use('/public', express.static('public'))
 
-  http.createServer(app).listen(config.server.port, () => {
+  http.createServer(app).listen(config.server.port, async () => {
     console.log(`server listening on port ${config.server.port}`)
+
+    for (let i = 0; i < 3; i++) {
+      const res = await go({remoteInput})
+      if (res) break
+    }
 
     cron.schedule('30 16 * * *', async () => {
       for (let i = 0; i < 3; i++) {
