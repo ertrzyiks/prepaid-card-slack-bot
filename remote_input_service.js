@@ -15,10 +15,12 @@ class RemoteInputService {
     });
 
     this.slackInteractions.action({ type: 'button' }, (payload, respond) => {
-      const requestId = payload.actions[0].action_id
+      const action = payload.actions[0]
+      const requestId = action.block_id
+      const value = action.value
 
       setImmediate(() => {
-        PubSub.publish(`button.${requestId}`, {triggerId: payload.trigger_id, requestId})
+        PubSub.publish(`button.${requestId}`, {triggerId: payload.trigger_id, requestId, value})
       })
 
       respond({ text: 'Browser session has started', replace_original: true})
@@ -40,9 +42,13 @@ class RemoteInputService {
 
     await requestCode({requestId})
 
-    return new Promise(resolve => {
-      PubSub.subscribe(`button.${requestId}`, (name, {requestId, triggerId}) => {
-        resolve({requestId, triggerId})
+    return new Promise((resolve, reject) => {
+      PubSub.subscribe(`button.${requestId}`, (name, {requestId, triggerId, value}) => {
+        if (value == 'proceed') {
+          resolve({requestId, triggerId})
+        } else {
+          reject(new Error('Action canceled'))
+        }
       })
     })
   }
