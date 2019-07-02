@@ -3,6 +3,8 @@ const { askForCode, requestCode } = require('./lib/slack/communication')
 const uuidv4 = require('uuid/v4')
 const PubSub = require('pubsub-js')
 
+class ActionCancelled extends Error {}
+
 class RemoteInputService {
   constructor() {
     this.slackInteractions = Client.getMessageAdapter()
@@ -47,7 +49,7 @@ class RemoteInputService {
         if (value == 'proceed') {
           resolve({requestId, triggerId})
         } else {
-          reject(new Error('Action canceled'))
+          reject(new ActionCancelled('Action cancelled'))
         }
       })
     })
@@ -55,5 +57,6 @@ class RemoteInputService {
 }
 
 module.exports = {
-  RemoteInputService
+  RemoteInputService,
+  ActionCancelled
 }
